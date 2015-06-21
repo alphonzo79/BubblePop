@@ -1,5 +1,6 @@
 package rowley.bubblepop.components;
 
+import android.util.Log;
 import android.view.SurfaceView;
 
 /**
@@ -8,8 +9,8 @@ import android.view.SurfaceView;
 public class MovingBubble {
     private int leftBound, topBound, rightBound, bottomBound;
     private int x, y;
-    private int yDirection, xDirection;
-    private int bubbleRadius = 25;
+    private float yDirection, xDirection;
+    private final int BUBBLE_RADIUS = 25;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
         this.leftBound = leftBound;
@@ -19,37 +20,53 @@ public class MovingBubble {
         this.x = initialX;
         this.y = initialY;
 
-        yDirection = 1;
-        xDirection = -1;
+        yDirection = 0.9f;
+        xDirection = -1.1f;
     }
 
     //move 500 pixels per second
     public void updateBubble(long deltaTimeInMilliseconds) {
-        x = (int)((deltaTimeInMilliseconds / 1000) * 500) * xDirection;
-        y = (int)((deltaTimeInMilliseconds / 1000) * 500) * yDirection;
+        x = (int)(x + (((deltaTimeInMilliseconds / 10) * 5) * xDirection));
+        y = (int)(y + (((deltaTimeInMilliseconds / 10) * 5) * yDirection));
 
         if(xDirection > 0) {
-            if(x >= (rightBound - bubbleRadius)) {
+            if(x >= (rightBound - BUBBLE_RADIUS)) {
                 xDirection = xDirection * -1;
             }
         } else {
-            if(x <= (leftBound + bubbleRadius)) {
+            if(x <= (leftBound + BUBBLE_RADIUS)) {
                 xDirection = xDirection * -1;
             }
         }
 
         if(yDirection > 0) {
-            if(y >= (bottomBound - bubbleRadius)) {
+            if(y >= (bottomBound - BUBBLE_RADIUS)) {
                 yDirection = yDirection * -1;
             }
         } else {
-            if(y <= topBound + bubbleRadius) {
+            if(y <= topBound + BUBBLE_RADIUS) {
                 yDirection = yDirection * -1;
             }
         }
     }
 
-    public void draw(SurfaceView surfaceView) {
-        //todo
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getBubbleRaduis() {
+        return BUBBLE_RADIUS;
     }
 }

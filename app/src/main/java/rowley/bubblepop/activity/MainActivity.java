@@ -4,10 +4,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import rowley.bubblepop.R;
 import rowley.bubblepop.control.GameController;
+import rowley.bubblepop.control.MainScreen;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -16,10 +18,29 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SurfaceView surface = new SurfaceView(this);
-        setContentView(surface);
 
-        controller = new GameController(surface);
+        controller = new GameController();
+
+        SurfaceView surface = new SurfaceView(this);
+        surface.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                controller.setScreenController(new MainScreen(holder));
+
+                holder.removeCallback(this);
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
+        setContentView(surface);
     }
 
     @Override

@@ -1,32 +1,19 @@
 package rowley.bubblepop.control;
 
 import android.app.Activity;
-import android.graphics.Point;
-import android.view.SurfaceView;
-import android.view.WindowManager;
 
-import rowley.bubblepop.components.MovingBubble;
+import rowley.bubblepop.interfaces.ScreenController;
 
 /**
  * Created by joe on 6/18/15.
  */
 public class GameController {
-    private SurfaceView surfaceView;
-    private MovingBubble bubble;
+
+    private ScreenController screenController;
 
     private Thread thread;
     private long currentTime, lastTime, deltaTime;
     private volatile boolean shouldContinue;
-
-    public GameController(SurfaceView surfaceView, Activity activity) {
-        this.surfaceView = surfaceView;
-
-        Point size = new Point();
-        WindowManager wm = activity.getWindowManager();
-        wm.getDefaultDisplay().getSize(size);
-
-        bubble = new MovingBubble(0, 0, size.x, size.y, size.x / 2, size.y / 2);
-    }
 
     public void onActivityResume(Activity activity) {
         shouldContinue = true;
@@ -47,12 +34,8 @@ public class GameController {
         }
     }
 
-    private void update(long deltaTime) {
-        bubble.updateBubble(deltaTime);
-    }
-
-    private void draw() {
-        bubble.draw(surfaceView);
+    public void setScreenController(ScreenController screenController) {
+        this.screenController = screenController;
     }
 
     private Runnable mainLooper = new Runnable() {
@@ -62,8 +45,10 @@ public class GameController {
             while(shouldContinue) {
                 currentTime = System.currentTimeMillis();
                 deltaTime = currentTime - lastTime;
-                update(deltaTime);
-                draw();
+                if(screenController != null) {
+                    screenController.update(deltaTime);
+                    screenController.present();
+                }
                 lastTime = currentTime;
             }
         }
