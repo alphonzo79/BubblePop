@@ -1,7 +1,4 @@
-package rowley.bubblepop.components;
-
-import android.util.Log;
-import android.view.SurfaceView;
+package rowley.bubblepop.models;
 
 /**
  * Created by joe on 6/18/15.
@@ -11,6 +8,7 @@ public class MovingBubble {
     private int x, y;
     private float yDirection, xDirection;
     private final int BUBBLE_RADIUS = 25;
+    private float movementRate;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
         this.leftBound = leftBound;
@@ -20,14 +18,16 @@ public class MovingBubble {
         this.x = initialX;
         this.y = initialY;
 
-        yDirection = 0.9f;
-        xDirection = -1.1f;
+        yDirection = 0.7f;
+        xDirection = -1.3f;
+
+        //Traverse the width in 1.5 seconds
+        movementRate = (rightBound / 1.5f) / 1000f;
     }
 
-    //move 500 pixels per second
     public void updateBubble(long deltaTimeInMilliseconds) {
-        x = (int)(x + (((deltaTimeInMilliseconds / 10) * 5) * xDirection));
-        y = (int)(y + (((deltaTimeInMilliseconds / 10) * 5) * yDirection));
+        x = (int)(x + ((deltaTimeInMilliseconds * movementRate)) * xDirection);
+        y = (int)(y + ((deltaTimeInMilliseconds * movementRate)) * yDirection);
 
         if(xDirection > 0) {
             if(x >= (rightBound - BUBBLE_RADIUS)) {
