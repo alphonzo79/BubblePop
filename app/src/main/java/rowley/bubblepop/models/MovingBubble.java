@@ -18,11 +18,20 @@ public class MovingBubble {
         this.x = initialX;
         this.y = initialY;
 
-        yDirection = 0.7f;
-        xDirection = -1.3f;
+        yDirection = 1.0f;
+        xDirection = -1.0f;
 
         //Traverse the width in 1.5 seconds
         movementRate = (rightBound / 1.5f) / 1000f;
+    }
+
+    public void setSpeedDifferential(float speedDifferential) {
+        movementRate = movementRate * speedDifferential;
+    }
+
+    public void setInitialDirection(float xDirection, float yDirection) {
+        this.xDirection = xDirection;
+        this.yDirection = yDirection;
     }
 
     public void updateBubble(long deltaTimeInMilliseconds) {

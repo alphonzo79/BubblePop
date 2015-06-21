@@ -5,6 +5,8 @@ import android.graphics.Paint;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import java.util.Random;
+
 import rowley.bubblepop.models.FrameRateTracker;
 import rowley.bubblepop.models.MovingBubble;
 import rowley.bubblepop.interfaces.ScreenController;
@@ -14,11 +16,15 @@ import rowley.bubblepop.interfaces.ScreenController;
  */
 public class MainScreen implements ScreenController {
     private SurfaceHolder surfaceHolder;
-    private MovingBubble bubble;
+    private MovingBubble[] bubbles;
+    private int bubbleCreateIndex = 0;
+    private int accumulatedDiff;
     private FrameRateTracker frameRateTracker;
     private Paint paint;
 
     private int width, height;
+
+    private Random random;
 
     public MainScreen(SurfaceHolder surfaceHolder) {
         this.surfaceHolder = surfaceHolder;
@@ -27,12 +33,45 @@ public class MainScreen implements ScreenController {
         width = surfaceHolder.getSurfaceFrame().right;
         height = surfaceHolder.getSurfaceFrame().bottom;
 
-        bubble = new MovingBubble(0, 0, width, height, width / 2, height / 2);
+        random = new Random();
+
+        bubbles = new MovingBubble[75];
+        bubbles[bubbleCreateIndex++] = createBubble();
         frameRateTracker = new FrameRateTracker();
     }
 
+    private MovingBubble createBubble() {
+        int bubbleX = random.nextInt(width);
+        int bubbleY = random.nextInt(height);
+        float bubbleYDir = random.nextFloat() + 0.5f;
+        if(random.nextBoolean()) {
+            bubbleYDir = -bubbleYDir;
+        }
+        float bubbleXDir = random.nextFloat() + 0.5f;
+        if(random.nextBoolean()) {
+            bubbleXDir = -bubbleXDir;
+        }
+
+        float speedDiff = random.nextFloat() + 0.35f;
+
+        MovingBubble bubble = new MovingBubble(0, 0, width, height, bubbleX, bubbleY);
+        bubble.setInitialDirection(bubbleXDir, bubbleYDir);
+        bubble.setSpeedDifferential(speedDiff);
+
+        return bubble;
+    }
+
     public void update(long deltaTime) {
-        bubble.updateBubble(deltaTime);
+        for(MovingBubble bubble : bubbles) {
+            if(bubble != null) {
+                bubble.updateBubble(deltaTime);
+            }
+        }
+        accumulatedDiff += deltaTime;
+        if(accumulatedDiff > 750 && bubbleCreateIndex < bubbles.length) {
+            bubbles[bubbleCreateIndex++] = createBubble();
+            accumulatedDiff = 0;
+        }
         frameRateTracker.update(deltaTime);
     }
 
@@ -42,8 +81,12 @@ public class MainScreen implements ScreenController {
             paint.setARGB(255, 0, 255, 255);
             canvas.drawRect(0, 0, width, height, paint);
 
-            paint.setARGB(255, 255, 0, 0);
-            canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRaduis(), paint);
+            for(MovingBubble bubble : bubbles) {
+                if(bubble != null) {
+                    paint.setARGB(255, 255, 0, 0);
+                    canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRaduis(), paint);
+                }
+            }
 
             paint.setARGB(255, 0, 0, 0);
             paint.setTextSize(24);
