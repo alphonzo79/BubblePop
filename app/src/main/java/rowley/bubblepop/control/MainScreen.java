@@ -18,7 +18,6 @@ public class MainScreen implements ScreenController {
     private SurfaceHolder surfaceHolder;
     private MovingBubble[] bubbles;
     private int bubbleCreateIndex = 0;
-    private int accumulatedDiff;
     private FrameRateTracker frameRateTracker;
     private Paint paint;
 
@@ -65,12 +64,9 @@ public class MainScreen implements ScreenController {
         for(MovingBubble bubble : bubbles) {
             if(bubble != null) {
                 bubble.updateBubble(deltaTime);
+            } else {
+                break;
             }
-        }
-        accumulatedDiff += deltaTime;
-        if(accumulatedDiff > 750 && bubbleCreateIndex < bubbles.length) {
-            bubbles[bubbleCreateIndex++] = createBubble();
-            accumulatedDiff = 0;
         }
         frameRateTracker.update(deltaTime);
     }
@@ -85,6 +81,8 @@ public class MainScreen implements ScreenController {
                 if(bubble != null) {
                     paint.setARGB(255, 255, 0, 0);
                     canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRaduis(), paint);
+                } else {
+                    break;
                 }
             }
 
