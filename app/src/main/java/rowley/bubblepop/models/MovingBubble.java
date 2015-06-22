@@ -1,5 +1,7 @@
 package rowley.bubblepop.models;
 
+import android.graphics.Color;
+
 /**
  * Created by joe on 6/18/15.
  */
@@ -9,6 +11,7 @@ public class MovingBubble {
     private float yDirection, xDirection;
     private final int BUBBLE_RADIUS = 25;
     private float movementRate;
+    private int color;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
         this.leftBound = leftBound;
@@ -23,6 +26,7 @@ public class MovingBubble {
 
         //Traverse the width in 1.5 seconds
         movementRate = (rightBound / 1.5f) / 1000f;
+        color = Color.argb(255, 255, 0, 0);
     }
 
     public void setSpeedDifferential(float speedDifferential) {
@@ -77,5 +81,13 @@ public class MovingBubble {
 
     public int getBubbleRaduis() {
         return BUBBLE_RADIUS;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

@@ -1,12 +1,15 @@
 package rowley.bubblepop.control;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
+import java.util.List;
 import java.util.Random;
 
+import rowley.bubblepop.interfaces.GameController;
+import rowley.bubblepop.interfaces.TouchEvent;
 import rowley.bubblepop.models.FrameRateTracker;
 import rowley.bubblepop.models.MovingBubble;
 import rowley.bubblepop.interfaces.ScreenController;
@@ -15,7 +18,6 @@ import rowley.bubblepop.interfaces.ScreenController;
  * Created by joe on 6/20/15.
  */
 public class MainScreen implements ScreenController {
-    private SurfaceHolder surfaceHolder;
     private MovingBubble[] bubbles;
     private int bubbleCreateIndex = 0;
     private FrameRateTracker frameRateTracker;
@@ -25,8 +27,9 @@ public class MainScreen implements ScreenController {
 
     private Random random;
 
+    private List<TouchEvent> touchEventList;
+
     public MainScreen(SurfaceHolder surfaceHolder) {
-        this.surfaceHolder = surfaceHolder;
         paint = new Paint();
 
         width = surfaceHolder.getSurfaceFrame().right;
@@ -42,6 +45,11 @@ public class MainScreen implements ScreenController {
     private MovingBubble createBubble() {
         int bubbleX = random.nextInt(width);
         int bubbleY = random.nextInt(height);
+
+        return createBubble(bubbleX, bubbleY);
+    }
+
+    private MovingBubble createBubble(int bubbleX, int bubbleY) {
         float bubbleYDir = random.nextFloat() + 0.5f;
         if(random.nextBoolean()) {
             bubbleYDir = -bubbleYDir;
@@ -56,11 +64,12 @@ public class MainScreen implements ScreenController {
         MovingBubble bubble = new MovingBubble(0, 0, width, height, bubbleX, bubbleY);
         bubble.setInitialDirection(bubbleXDir, bubbleYDir);
         bubble.setSpeedDifferential(speedDiff);
+        bubble.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
 
         return bubble;
     }
 
-    public void update(long deltaTime) {
+    public void update(long deltaTime, GameController controller) {
         for(MovingBubble bubble : bubbles) {
             if(bubble != null) {
                 bubble.updateBubble(deltaTime);
@@ -68,10 +77,23 @@ public class MainScreen implements ScreenController {
                 break;
             }
         }
+
+        touchEventList = controller.getTouchHandler().getTouchEvents();
+        if(touchEventList != null && !touchEventList.isEmpty()) {
+            for(TouchEvent event : touchEventList) {
+                if(event.getType() == TouchEvent.TOUCH_UP) {
+                    bubbles[bubbleCreateIndex++] = createBubble(event.getX(), event.getY());
+                    if(bubbleCreateIndex >= bubbles.length) {
+                        bubbleCreateIndex = 0;
+                    }
+                }
+            }
+        }
+
         frameRateTracker.update(deltaTime);
     }
 
-    public void present() {
+    public void present(SurfaceHolder surfaceHolder) {
         Canvas canvas = surfaceHolder.lockCanvas();
         if(canvas != null) {
             paint.setARGB(255, 0, 255, 255);
@@ -79,7 +101,7 @@ public class MainScreen implements ScreenController {
 
             for(MovingBubble bubble : bubbles) {
                 if(bubble != null) {
-                    paint.setARGB(255, 255, 0, 0);
+                    paint.setColor(bubble.getColor());
                     canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRaduis(), paint);
                 } else {
                     break;
