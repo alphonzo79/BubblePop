@@ -1,6 +1,7 @@
 package rowley.bubblepop.control;
 
 import android.app.Activity;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import rowley.bubblepop.inputhandling.MultiTouchHandler;
@@ -28,12 +29,14 @@ public class GameControllerImpl implements GameController {
         touchHandler = new MultiTouchHandler(surfaceView, 1.0f, 1.0f);
     }
 
+    @Override
     public void onActivityResume(Activity activity) {
         shouldContinue = true;
         thread = new Thread(mainLooper);
         thread.start();
     }
 
+    @Override
     public void onActivityPause(Activity activity) {
         shouldContinue = false;
         boolean isStopped = false;
@@ -47,8 +50,14 @@ public class GameControllerImpl implements GameController {
         }
     }
 
+    @Override
     public void setScreenController(ScreenController screenController) {
         this.screenController = screenController;
+    }
+
+    @Override
+    public SurfaceHolder getSurfaceHolder() {
+        return surfaceView.getHolder();
     }
 
     private Runnable mainLooper = new Runnable() {

@@ -97,6 +97,7 @@ public class MainScreen implements ScreenController {
                     bubbles[bubbleCreateIndex++] = createBubble(event.getX(), event.getY());
                     if(bubbleCreateIndex >= bubbles.length) {
                         bubbleCreateIndex = 0;
+                        controller.setScreenController(new SinglePopScreen(controller.getSurfaceHolder()));
                     }
                     touchIndicators[touchIndicatorIndex++] = new TouchIndicator(event.getX(), event.getY());
                     if(touchIndicatorIndex >= touchIndicators.length) {

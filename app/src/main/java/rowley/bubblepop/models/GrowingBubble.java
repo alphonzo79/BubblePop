@@ -6,8 +6,8 @@ package rowley.bubblepop.models;
 public class GrowingBubble {
     private final int INITIAL_RADIUS = 25;
     public static final int MAXIMUM_RADIUS = 250;
-    private final int GROWTH_RATE = 100; //pixels per second
-    private final int POP_TIME_IN_MILLIS = 200;
+    private final int GROWTH_RATE = 150; //pixels per second
+    private final int POP_TIME_IN_MILLIS = 300;
 
     private int color;
     private int x;

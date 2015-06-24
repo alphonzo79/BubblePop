@@ -86,6 +86,16 @@ public class SinglePopScreen implements ScreenController {
 
         bubble.update(deltaTime);
 
+        if(bubble.getState() == GrowingBubble.State.POPPED) {
+            if(bubble.wasPopped()) {
+                score += 10;
+                bubble = getBubble();
+            } else {
+                gameController.setScreenController(new MainScreen(gameController.getSurfaceHolder()));
+                //todo
+            }
+        }
+
         frameRateTracker.update(deltaTime);
     }
 
@@ -101,17 +111,6 @@ public class SinglePopScreen implements ScreenController {
                 canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getRadius(), paint);
             } else if(bubble.getState() == GrowingBubble.State.POPPING) {
                 //todo
-            } else {
-                if(bubble.wasPopped()) {
-                    score += 10;
-                    bubble = getBubble();
-                } else {
-                    paint.setTypeface(Typeface.DEFAULT_BOLD);
-                    paint.setARGB(255, 0, 0, 0);
-                    paint.setTextSize(62);
-                    canvas.drawText("Lost!", width / 2, height / 2, paint);
-                    //todo
-                }
             }
 
             paint.setTypeface(Typeface.DEFAULT_BOLD);

@@ -10,10 +10,11 @@ import android.view.WindowManager;
 import rowley.bubblepop.control.GameControllerImpl;
 import rowley.bubblepop.control.MainScreen;
 import rowley.bubblepop.control.SinglePopScreen;
+import rowley.bubblepop.interfaces.GameController;
 
 
 public class MainActivity extends Activity {
-    private GameControllerImpl controller;
+    private GameController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
