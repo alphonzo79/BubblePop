@@ -9,6 +9,7 @@ import android.view.WindowManager;
 
 import rowley.bubblepop.control.GameControllerImpl;
 import rowley.bubblepop.control.MainScreen;
+import rowley.bubblepop.control.SinglePopScreen;
 
 
 public class MainActivity extends Activity {
@@ -24,7 +25,7 @@ public class MainActivity extends Activity {
         surface.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                controller.setScreenController(new MainScreen(holder));
+                controller.setScreenController(new SinglePopScreen(holder));
 
                 holder.removeCallback(this);
             }
