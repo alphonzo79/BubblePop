@@ -79,7 +79,7 @@ public class MovingBubble {
         this.y = y;
     }
 
-    public int getBubbleRaduis() {
+    public int getBubbleRadius() {
         return BUBBLE_RADIUS;
     }
 

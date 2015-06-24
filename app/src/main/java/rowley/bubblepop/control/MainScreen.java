@@ -13,13 +13,16 @@ import rowley.bubblepop.interfaces.TouchEvent;
 import rowley.bubblepop.models.FrameRateTracker;
 import rowley.bubblepop.models.MovingBubble;
 import rowley.bubblepop.interfaces.ScreenController;
+import rowley.bubblepop.models.TouchIndicator;
 
 /**
  * Created by joe on 6/20/15.
  */
 public class MainScreen implements ScreenController {
     private MovingBubble[] bubbles;
+    private TouchIndicator[] touchIndicators;
     private int bubbleCreateIndex = 0;
+    private int touchIndicatorIndex = 0;
     private FrameRateTracker frameRateTracker;
     private Paint paint;
 
@@ -39,6 +42,9 @@ public class MainScreen implements ScreenController {
 
         bubbles = new MovingBubble[75];
         bubbles[bubbleCreateIndex++] = createBubble();
+
+        touchIndicators = new TouchIndicator[25];
+
         frameRateTracker = new FrameRateTracker();
     }
 
@@ -78,6 +84,12 @@ public class MainScreen implements ScreenController {
             }
         }
 
+        for(TouchIndicator indicator : touchIndicators) {
+            if(indicator != null) {
+                indicator.update(deltaTime);
+            }
+        }
+
         touchEventList = controller.getTouchHandler().getTouchEvents();
         if(touchEventList != null && !touchEventList.isEmpty()) {
             for(TouchEvent event : touchEventList) {
@@ -85,6 +97,10 @@ public class MainScreen implements ScreenController {
                     bubbles[bubbleCreateIndex++] = createBubble(event.getX(), event.getY());
                     if(bubbleCreateIndex >= bubbles.length) {
                         bubbleCreateIndex = 0;
+                    }
+                    touchIndicators[touchIndicatorIndex++] = new TouchIndicator(event.getX(), event.getY());
+                    if(touchIndicatorIndex >= touchIndicators.length) {
+                        touchIndicatorIndex = 0;
                     }
                 }
             }
@@ -102,12 +118,26 @@ public class MainScreen implements ScreenController {
             for(MovingBubble bubble : bubbles) {
                 if(bubble != null) {
                     paint.setColor(bubble.getColor());
-                    canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRaduis(), paint);
+                    canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRadius(), paint);
                 } else {
                     break;
                 }
             }
 
+            paint.setStyle(Paint.Style.STROKE);
+            for(TouchIndicator indicator : touchIndicators) {
+                if(indicator != null) {
+                    TouchIndicator.IndicatorCircle[] circles = indicator.getIndicatorCircles();
+                    for (TouchIndicator.IndicatorCircle circle : circles) {
+                        if (circle != null) {
+                            paint.setColor(circle.getColor());
+                            canvas.drawCircle(indicator.getX(), indicator.getY(), circle.getRadius(), paint);
+                        }
+                    }
+                }
+            }
+
+            paint.setStyle(Paint.Style.FILL);
             paint.setARGB(255, 0, 0, 0);
             paint.setTextSize(24);
             canvas.drawText(frameRateTracker.getFrameRate() + " fps", 50, 50, paint);
