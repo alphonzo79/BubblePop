@@ -8,7 +8,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import rowley.bubblepop.control.GameControllerImpl;
-import rowley.bubblepop.control.MainScreen;
 import rowley.bubblepop.control.SinglePopScreen;
 import rowley.bubblepop.interfaces.GameController;
 

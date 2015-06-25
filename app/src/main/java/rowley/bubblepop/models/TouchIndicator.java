@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import rowley.bubblepop.interfaces.TouchEvent;
+import rowley.bubblepop.util.ColorHelper;
 
 /**
  * Created by joe on 6/21/15.
@@ -34,8 +35,7 @@ public class TouchIndicator {
     }
 
     private IndicatorCircle createNewCircle() {
-        int color = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
-        return new IndicatorCircle(RADIUS_INITIAL, color);
+        return new IndicatorCircle(RADIUS_INITIAL, ColorHelper.getRandomColor());
     }
 
     public int getX() {

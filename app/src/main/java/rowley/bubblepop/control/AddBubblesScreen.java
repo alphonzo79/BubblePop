@@ -14,17 +14,19 @@ import rowley.bubblepop.models.FrameRateTracker;
 import rowley.bubblepop.models.MovingBubble;
 import rowley.bubblepop.interfaces.ScreenController;
 import rowley.bubblepop.models.TouchIndicator;
+import rowley.bubblepop.util.ColorHelper;
 
 /**
  * Created by joe on 6/20/15.
  */
-public class MainScreen implements ScreenController {
+public class AddBubblesScreen implements ScreenController {
     private MovingBubble[] bubbles;
     private TouchIndicator[] touchIndicators;
     private int bubbleCreateIndex = 0;
     private int touchIndicatorIndex = 0;
     private FrameRateTracker frameRateTracker;
     private Paint paint;
+    private final int BACKGROUND_COLOR;
 
     private int width, height;
 
@@ -32,8 +34,9 @@ public class MainScreen implements ScreenController {
 
     private List<TouchEvent> touchEventList;
 
-    public MainScreen(SurfaceHolder surfaceHolder) {
+    public AddBubblesScreen(SurfaceHolder surfaceHolder) {
         paint = new Paint();
+        BACKGROUND_COLOR = ColorHelper.getBackgroundColor();
 
         width = surfaceHolder.getSurfaceFrame().right;
         height = surfaceHolder.getSurfaceFrame().bottom;
@@ -70,7 +73,7 @@ public class MainScreen implements ScreenController {
         MovingBubble bubble = new MovingBubble(0, 0, width, height, bubbleX, bubbleY);
         bubble.setInitialDirection(bubbleXDir, bubbleYDir);
         bubble.setSpeedDifferential(speedDiff);
-        bubble.setColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
+        bubble.setColor(ColorHelper.getRandomColor());
 
         return bubble;
     }
@@ -113,7 +116,7 @@ public class MainScreen implements ScreenController {
     public void present(SurfaceHolder surfaceHolder) {
         Canvas canvas = surfaceHolder.lockCanvas();
         if(canvas != null) {
-            paint.setARGB(255, 0, 255, 255);
+            paint.setColor(BACKGROUND_COLOR);
             canvas.drawRect(0, 0, width, height, paint);
 
             for(MovingBubble bubble : bubbles) {
@@ -139,7 +142,7 @@ public class MainScreen implements ScreenController {
             }
 
             paint.setStyle(Paint.Style.FILL);
-            paint.setARGB(255, 0, 0, 0);
+            paint.setColor(ColorHelper.getTextColor());
             paint.setTextSize(24);
             canvas.drawText(frameRateTracker.getFrameRate() + " fps", 50, 50, paint);
 

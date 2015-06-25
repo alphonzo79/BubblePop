@@ -12,6 +12,7 @@ public class MovingBubble {
     private final int BUBBLE_RADIUS = 25;
     private float movementRate;
     private int color;
+    private boolean ignoreBounds = false;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
         this.leftBound = leftBound;
@@ -42,23 +43,27 @@ public class MovingBubble {
         x = (int)(x + ((deltaTimeInMilliseconds * movementRate)) * xDirection);
         y = (int)(y + ((deltaTimeInMilliseconds * movementRate)) * yDirection);
 
-        if(xDirection > 0) {
-            if(x >= (rightBound - BUBBLE_RADIUS)) {
-                xDirection = xDirection * -1;
-            }
-        } else {
-            if(x <= (leftBound + BUBBLE_RADIUS)) {
-                xDirection = xDirection * -1;
+        if(!ignoreBounds) {
+            if (xDirection > 0) {
+                if (x >= (rightBound - BUBBLE_RADIUS)) {
+                    xDirection = xDirection * -1;
+                }
+            } else {
+                if (x <= (leftBound + BUBBLE_RADIUS)) {
+                    xDirection = xDirection * -1;
+                }
             }
         }
 
-        if(yDirection > 0) {
-            if(y >= (bottomBound - BUBBLE_RADIUS)) {
-                yDirection = yDirection * -1;
-            }
-        } else {
-            if(y <= topBound + BUBBLE_RADIUS) {
-                yDirection = yDirection * -1;
+        if(!ignoreBounds) {
+            if (yDirection > 0) {
+                if (y >= (bottomBound - BUBBLE_RADIUS)) {
+                    yDirection = yDirection * -1;
+                }
+            } else {
+                if (y <= topBound + BUBBLE_RADIUS) {
+                    yDirection = yDirection * -1;
+                }
             }
         }
     }
@@ -89,5 +94,13 @@ public class MovingBubble {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public boolean isIgnoreBounds() {
+        return ignoreBounds;
+    }
+
+    public void setIgnoreBounds(boolean ignoreBounds) {
+        this.ignoreBounds = ignoreBounds;
     }
 }
