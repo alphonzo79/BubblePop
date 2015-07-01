@@ -1,6 +1,11 @@
 package rowley.bubblepop.control;
 
 import android.app.Activity;
+import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -13,6 +18,7 @@ import rowley.bubblepop.interfaces.TouchHandler;
  * Created by joe on 6/18/15.
  */
 public class GameControllerImpl implements GameController {
+    private Activity context;
 
     private ScreenController screenController;
 
@@ -23,10 +29,18 @@ public class GameControllerImpl implements GameController {
     private volatile boolean shouldContinue;
 
     private TouchHandler touchHandler;
+    private SoundPool soundPool;
 
-    public GameControllerImpl(SurfaceView surfaceView) {
+    public GameControllerImpl(SurfaceView surfaceView, Activity activity) {
+        this.context = activity;
         this.surfaceView = surfaceView;
         touchHandler = new MultiTouchHandler(surfaceView, 1.0f, 1.0f);
+        if(Build.VERSION.SDK_INT < 21) {
+            soundPool = new SoundPool(20, AudioManager.STREAM_MUSIC, 0);
+        } else {
+            soundPool = new SoundPool.Builder().setMaxStreams(20).setAudioAttributes(new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build()).build();
+        }
+        activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
@@ -79,5 +93,15 @@ public class GameControllerImpl implements GameController {
     @Override
     public TouchHandler getTouchHandler() {
         return touchHandler;
+    }
+
+    @Override
+    public SoundPool getSoundPool() {
+        return soundPool;
+    }
+
+    @Override
+    public Context getContext() {
+        return context;
     }
 }

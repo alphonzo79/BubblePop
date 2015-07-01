@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
         surface.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                controller.setScreenController(new SinglePopScreen(holder));
+                controller.setScreenController(new SinglePopScreen(holder, controller));
 
                 holder.removeCallback(this);
             }
@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
         });
         setContentView(surface);
 
-        controller = new GameControllerImpl(surface);
+        controller = new GameControllerImpl(surface, this);
     }
 
     @Override

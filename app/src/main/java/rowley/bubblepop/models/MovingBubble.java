@@ -13,6 +13,7 @@ public class MovingBubble {
     private float movementRate;
     private int color;
     private boolean ignoreBounds = false;
+    private boolean changedDirection = false;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
         this.leftBound = leftBound;
@@ -40,6 +41,8 @@ public class MovingBubble {
     }
 
     public void updateBubble(long deltaTimeInMilliseconds) {
+        changedDirection = false;
+
         x = (int)(x + ((deltaTimeInMilliseconds * movementRate)) * xDirection);
         y = (int)(y + ((deltaTimeInMilliseconds * movementRate)) * yDirection);
 
@@ -47,10 +50,12 @@ public class MovingBubble {
             if (xDirection > 0) {
                 if (x >= (rightBound - BUBBLE_RADIUS)) {
                     xDirection = xDirection * -1;
+                    changedDirection = true;
                 }
             } else {
                 if (x <= (leftBound + BUBBLE_RADIUS)) {
                     xDirection = xDirection * -1;
+                    changedDirection = true;
                 }
             }
         }
@@ -59,10 +64,12 @@ public class MovingBubble {
             if (yDirection > 0) {
                 if (y >= (bottomBound - BUBBLE_RADIUS)) {
                     yDirection = yDirection * -1;
+                    changedDirection = true;
                 }
             } else {
                 if (y <= topBound + BUBBLE_RADIUS) {
                     yDirection = yDirection * -1;
+                    changedDirection = true;
                 }
             }
         }
@@ -102,5 +109,9 @@ public class MovingBubble {
 
     public void setIgnoreBounds(boolean ignoreBounds) {
         this.ignoreBounds = ignoreBounds;
+    }
+
+    public boolean isChangedDirection() {
+        return changedDirection;
     }
 }

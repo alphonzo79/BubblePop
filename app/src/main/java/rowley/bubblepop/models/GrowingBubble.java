@@ -6,7 +6,7 @@ package rowley.bubblepop.models;
 public class GrowingBubble {
     private final int INITIAL_RADIUS = 25;
     public static final int MAXIMUM_RADIUS = 250;
-    private final int GROWTH_RATE = 150; //pixels per second
+    private int growthRate = 150; //pixels per second
     private final int POP_TIME_IN_MILLIS = 500;
 
     private int color;
@@ -28,7 +28,7 @@ public class GrowingBubble {
 
     public void update(long deltaTimeInMillis) {
         if(state == State.GROWING) {
-            int growthFactor = (int) (deltaTimeInMillis * GROWTH_RATE) / 1000;
+            int growthFactor = (int) (deltaTimeInMillis * growthRate) / 1000;
             radius += growthFactor;
             if(radius >= MAXIMUM_RADIUS) {
                 state = State.POPPING;
@@ -66,9 +66,19 @@ public class GrowingBubble {
         return wasPopped;
     }
 
+    public void adjustGrowthRate(float differential) {
+        growthRate = (int)(growthRate * differential);
+    }
+
     public void pop() {
         this.wasPopped = true;
         this.state = State.POPPING;
+    }
+
+    public float getSoundPlaybackRate(int lengthInSeconds) {
+        int needToGrow = MAXIMUM_RADIUS - INITIAL_RADIUS;
+        float secondsNeededToGrow = needToGrow / growthRate;
+        return secondsNeededToGrow / lengthInSeconds;
     }
 
     public enum State {

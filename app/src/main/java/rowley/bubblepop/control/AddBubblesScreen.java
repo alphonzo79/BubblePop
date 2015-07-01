@@ -3,8 +3,10 @@ package rowley.bubblepop.control;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.SoundPool;
 import android.view.SurfaceHolder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +22,9 @@ import rowley.bubblepop.util.ColorHelper;
  * Created by joe on 6/20/15.
  */
 public class AddBubblesScreen implements ScreenController {
+    private SoundPool soundPool;
+    private int bounceSoundId;
+
     private MovingBubble[] bubbles;
     private TouchIndicator[] touchIndicators;
     private int bubbleCreateIndex = 0;
@@ -34,7 +39,7 @@ public class AddBubblesScreen implements ScreenController {
 
     private List<TouchEvent> touchEventList;
 
-    public AddBubblesScreen(SurfaceHolder surfaceHolder) {
+    public AddBubblesScreen(SurfaceHolder surfaceHolder, GameController gameController) {
         paint = new Paint();
         BACKGROUND_COLOR = ColorHelper.getBackgroundColor();
 
@@ -49,6 +54,13 @@ public class AddBubblesScreen implements ScreenController {
         touchIndicators = new TouchIndicator[25];
 
         frameRateTracker = new FrameRateTracker();
+
+        soundPool = gameController.getSoundPool();
+        try {
+            bounceSoundId = soundPool.load(gameController.getContext().getAssets().openFd("bounce.mp3"), 0);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private MovingBubble createBubble() {
@@ -100,7 +112,7 @@ public class AddBubblesScreen implements ScreenController {
                     bubbles[bubbleCreateIndex++] = createBubble(event.getX(), event.getY());
                     if(bubbleCreateIndex >= bubbles.length) {
                         bubbleCreateIndex = 0;
-                        controller.setScreenController(new SinglePopScreen(controller.getSurfaceHolder()));
+                        controller.setScreenController(new SinglePopScreen(controller.getSurfaceHolder(), controller));
                     }
                     touchIndicators[touchIndicatorIndex++] = new TouchIndicator(event.getX(), event.getY());
                     if(touchIndicatorIndex >= touchIndicators.length) {
@@ -123,6 +135,9 @@ public class AddBubblesScreen implements ScreenController {
                 if(bubble != null) {
                     paint.setColor(bubble.getColor());
                     canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRadius(), paint);
+                    if(bubble.isChangedDirection()) {
+                        soundPool.play(bounceSoundId, 1f, 1f, 0, 0, 1f);
+                    }
                 } else {
                     break;
                 }

@@ -3,9 +3,11 @@ package rowley.bubblepop.control;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.media.SoundPool;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -23,9 +25,15 @@ import rowley.bubblepop.util.ColorHelper;
  */
 public class SinglePopScreen implements ScreenController {
     private GrowingBubble bubble;
+    private float bubbleGrowSoundSpeed;
+    private final int GROW_SOUND_LENGTH = 1;
     private MovingBubble[] bubblePops;
     private final int BUBBLE_POP_COUNT = 6;
     private final float BUBBLE_POP_SPEED = 1.5f;
+    private SoundPool soundPool;
+    private int growSoundId;
+    private int popSoundId;
+
     private FrameRateTracker frameRateTracker;
     private Paint paint;
     private final int BACKGROUND_COLOR;
@@ -40,7 +48,7 @@ public class SinglePopScreen implements ScreenController {
 
     private List<TouchEvent> touchEventList;
 
-    public SinglePopScreen(SurfaceHolder surfaceHolder) {
+    public SinglePopScreen(SurfaceHolder surfaceHolder, GameController gameController) {
         paint = new Paint();
         BACKGROUND_COLOR = ColorHelper.getBackgroundColor();
 
@@ -51,7 +59,17 @@ public class SinglePopScreen implements ScreenController {
 
         frameRateTracker = new FrameRateTracker();
 
+        soundPool = gameController.getSoundPool();
+        try {
+            growSoundId = soundPool.load(gameController.getContext().getAssets().openFd("stretch.mp3"), 0);
+            popSoundId = soundPool.load(gameController.getContext().getAssets().openFd("pop.mp3"), 0);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
         bubble = getBubble();
+        bubbleGrowSoundSpeed = bubble.getSoundPlaybackRate(GROW_SOUND_LENGTH);
+        soundPool.play(growSoundId, 1.0f, 1.0f, 0, 0, bubbleGrowSoundSpeed);
         bubblePops = new MovingBubble[BUBBLE_POP_COUNT];
 
         score = 0;
@@ -83,6 +101,8 @@ public class SinglePopScreen implements ScreenController {
                         if(event.getY() > bubbleY - yDiffThreshold
                                 || event.getY() < bubbleY + yDiffThreshold) {
                             bubble.pop();
+                            soundPool.stop(growSoundId);
+                            soundPool.play(popSoundId, 1.0f, 1.0f, 0, 0, 1f);
                             createBubblePops(bubbleX, bubbleY, bubble.getColor());
                         }
                     }
@@ -105,8 +125,10 @@ public class SinglePopScreen implements ScreenController {
             if(bubble.wasPopped()) {
                 score += 10;
                 bubble = getBubble();
+                bubbleGrowSoundSpeed = bubble.getSoundPlaybackRate(GROW_SOUND_LENGTH);
+                soundPool.play(growSoundId, 1.0f, 1.0f, 0, 0, bubbleGrowSoundSpeed);
             } else {
-                gameController.setScreenController(new AddBubblesScreen(gameController.getSurfaceHolder()));
+                gameController.setScreenController(new AddBubblesScreen(gameController.getSurfaceHolder(), gameController));
                 //todo
             }
         }
