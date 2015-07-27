@@ -31,6 +31,11 @@ public class BubbleInteractionHelper {
     }
 
     public static void collideBubbles(MovingBubble bubbleOne, MovingBubble bubbleTwo) {
-        
+        bubbleOne.flipX();
+        bubbleOne.flipY();
+        bubbleTwo.flipY();
+        bubbleTwo.flipX();
+
+        //todo figure out which ways we need to flip and at which angle and speed
     }
 }

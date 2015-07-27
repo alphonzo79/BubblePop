@@ -75,9 +75,10 @@ public class SinglePopScreen implements ScreenController {
     }
 
     private GrowingBubble getBubble() {
-        int x = random.nextInt(width - (GrowingBubble.MAXIMUM_RADIUS * 2)) + GrowingBubble.MAXIMUM_RADIUS;
-        int y = random.nextInt(height - (GrowingBubble.MAXIMUM_RADIUS * 2)) + GrowingBubble.MAXIMUM_RADIUS;
-        return new GrowingBubble(x, y, ColorHelper.getRandomColor());
+        int maxRadius = GrowingBubble.getMaximumRadius(0, width);
+        int x = random.nextInt(width - (maxRadius * 2)) + maxRadius;
+        int y = random.nextInt(height - (maxRadius * 2)) + maxRadius;
+        return new GrowingBubble(0, width, x, y, ColorHelper.getRandomColor());
     }
 
     @Override

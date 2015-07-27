@@ -15,6 +15,7 @@ import rowley.bubblepop.interfaces.TouchEvent;
 import rowley.bubblepop.models.FrameRateTracker;
 import rowley.bubblepop.models.MovingBubble;
 import rowley.bubblepop.models.TouchIndicator;
+import rowley.bubblepop.util.BubbleInteractionHelper;
 import rowley.bubblepop.util.ColorHelper;
 
 /**
@@ -109,12 +110,7 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
                     double disty = (ay-by)*(ay-by);
                     double distance = Math.sqrt(distx + disty);
                     if(Math.floor(distance) <= 100){
-                        bubbles[i].flipX();
-                        bubbles[j].flipY();
-                        bubbles[i].flipY();
-                        bubbles[j].flipX();
-
-                        //todo figure out which ways we need to flip and at which angle and speed
+                        BubbleInteractionHelper.collideBubbles(bubbles[i], bubbles[j]);
                     }
                 }
             }

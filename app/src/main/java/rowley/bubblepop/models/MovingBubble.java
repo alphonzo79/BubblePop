@@ -8,13 +8,15 @@ import android.graphics.Color;
 public class MovingBubble extends BubbleBase {
     private int leftBound, topBound, rightBound, bottomBound;
     private float yDirection, xDirection;
-    private static final int BUBBLE_RADIUS = 25;
-    private float movementRate;
+    private static final int BUBBLE_RADIUS_DIVISOR = 28;
+    private final int BUBBLE_RADIUS;
     private boolean ignoreBounds = false;
     private boolean changedDirection = false;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
-        super(initialX, initialY, BUBBLE_RADIUS, Color.argb(255, 255, 0, 0));
+        super(initialX, initialY, (rightBound - leftBound) / BUBBLE_RADIUS_DIVISOR, Color.argb(255, 255, 0, 0));
+
+        BUBBLE_RADIUS = this.radius;
 
         this.leftBound = leftBound;
         this.topBound = topBound;
@@ -27,11 +29,14 @@ public class MovingBubble extends BubbleBase {
         xDirection = -1.0f;
 
         //Traverse the width in 1.5 seconds
-        movementRate = (rightBound / 1.5f) / 1000f;
+        float movementRate = (rightBound / 1.5f) / 1000f;
+        yDirection = yDirection * movementRate;
+        xDirection = xDirection * movementRate;
     }
 
     public void setSpeedDifferential(float speedDifferential) {
-        movementRate = movementRate * speedDifferential;
+        yDirection = yDirection * speedDifferential;
+        xDirection = xDirection * speedDifferential;
     }
 
     public void setInitialDirection(float xDirection, float yDirection) {
@@ -42,8 +47,8 @@ public class MovingBubble extends BubbleBase {
     public void updateBubble(long deltaTimeInMilliseconds) {
         changedDirection = false;
 
-        x = (int)(x + ((deltaTimeInMilliseconds * movementRate)) * xDirection);
-        y = (int)(y + ((deltaTimeInMilliseconds * movementRate)) * yDirection);
+        x = (int)(x + deltaTimeInMilliseconds * xDirection);
+        y = (int)(y + deltaTimeInMilliseconds * yDirection);
 
         if(!ignoreBounds) {
             if (xDirection > 0) {

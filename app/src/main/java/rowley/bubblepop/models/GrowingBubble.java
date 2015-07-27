@@ -4,8 +4,10 @@ package rowley.bubblepop.models;
  * Created by joe on 6/23/15.
  */
 public class GrowingBubble extends BubbleBase {
-    private static final int INITIAL_RADIUS = 25;
-    public static final int MAXIMUM_RADIUS = 250;
+    private static final int INITIAL_RADIUS_RATIO = 28;
+    private final int INITIAL_RADIUS;
+    private static final int MAXIMUM_RADIUS_RATIO = 4;
+    public final int MAXIMUM_RADIUS;
     private int growthRate = 150; //pixels per second
     private final int POP_TIME_IN_MILLIS = 500;
 
@@ -13,8 +15,11 @@ public class GrowingBubble extends BubbleBase {
     private boolean wasPopped = false;
     private long popDuration;
 
-    public GrowingBubble(int x, int y, int color) {
-        super(x, y, INITIAL_RADIUS, color);
+    public GrowingBubble(int leftBound, int rightBound, int x, int y, int color) {
+        super(x, y, (rightBound - leftBound) / INITIAL_RADIUS_RATIO, color);
+        INITIAL_RADIUS = this.radius;
+        MAXIMUM_RADIUS = getMaximumRadius(leftBound, rightBound);
+
         this.state = State.GROWING;
     }
 
@@ -56,6 +61,10 @@ public class GrowingBubble extends BubbleBase {
         int needToGrow = MAXIMUM_RADIUS - INITIAL_RADIUS;
         float secondsNeededToGrow = needToGrow / growthRate;
         return secondsNeededToGrow / lengthInSeconds;
+    }
+
+    public static int getMaximumRadius(int leftBound, int rightBound) {
+        return (rightBound - leftBound) / MAXIMUM_RADIUS_RATIO;
     }
 
     public enum State {
