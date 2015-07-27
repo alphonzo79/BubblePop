@@ -21,10 +21,12 @@ public class AddBubblesScreen extends MovingBubbleScreenBase {
 
     public AddBubblesScreen(SurfaceHolder surfaceHolder, GameController gameController) {
         super(surfaceHolder, gameController, 25);
+
+        bubbles[bubbleCreateIndex++] = createBubble();
     }
 
     @Override
-    protected void handleTouchEvents(GameController controller) {
+    protected void handleTouchEvents(long deltaTime, GameController controller) {
         touchEventList = controller.getTouchHandler().getTouchEvents();
         if(touchEventList != null && !touchEventList.isEmpty()) {
             for(TouchEvent event : touchEventList) {

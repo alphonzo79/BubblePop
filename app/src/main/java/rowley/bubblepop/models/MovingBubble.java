@@ -5,17 +5,17 @@ import android.graphics.Color;
 /**
  * Created by joe on 6/18/15.
  */
-public class MovingBubble {
+public class MovingBubble extends BubbleBase {
     private int leftBound, topBound, rightBound, bottomBound;
-    private int x, y;
     private float yDirection, xDirection;
-    private final int BUBBLE_RADIUS = 25;
+    private static final int BUBBLE_RADIUS = 25;
     private float movementRate;
-    private int color;
     private boolean ignoreBounds = false;
     private boolean changedDirection = false;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
+        super(initialX, initialY, BUBBLE_RADIUS, Color.argb(255, 255, 0, 0));
+
         this.leftBound = leftBound;
         this.topBound = topBound;
         this.rightBound = rightBound;
@@ -28,7 +28,6 @@ public class MovingBubble {
 
         //Traverse the width in 1.5 seconds
         movementRate = (rightBound / 1.5f) / 1000f;
-        color = Color.argb(255, 255, 0, 0);
     }
 
     public void setSpeedDifferential(float speedDifferential) {
@@ -49,13 +48,11 @@ public class MovingBubble {
         if(!ignoreBounds) {
             if (xDirection > 0) {
                 if (x >= (rightBound - BUBBLE_RADIUS)) {
-                    xDirection = xDirection * -1;
-                    changedDirection = true;
+                    flipX();
                 }
             } else {
                 if (x <= (leftBound + BUBBLE_RADIUS)) {
-                    xDirection = xDirection * -1;
-                    changedDirection = true;
+                    flipX();
                 }
             }
         }
@@ -63,16 +60,24 @@ public class MovingBubble {
         if(!ignoreBounds) {
             if (yDirection > 0) {
                 if (y >= (bottomBound - BUBBLE_RADIUS)) {
-                    yDirection = yDirection * -1;
-                    changedDirection = true;
+                    flipY();
                 }
             } else {
                 if (y <= topBound + BUBBLE_RADIUS) {
-                    yDirection = yDirection * -1;
-                    changedDirection = true;
+                    flipY();
                 }
             }
         }
+    }
+
+    public void flipX() {
+        xDirection = xDirection * -1;
+        changedDirection = true;
+    }
+
+    public void flipY() {
+        yDirection = yDirection * -1;
+        changedDirection = true;
     }
 
     public int getX() {

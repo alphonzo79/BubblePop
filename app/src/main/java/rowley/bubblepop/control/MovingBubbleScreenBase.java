@@ -48,7 +48,6 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
         random = new Random();
 
         bubbles = new MovingBubble[bubbleArrayLength];
-        bubbles[bubbleCreateIndex++] = createBubble();
 
         touchIndicators = new TouchIndicator[25];
 
@@ -98,18 +97,41 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
             }
         }
 
+        //Check for collissions between bubbles
+        for(int i = 0; i < bubbles.length; i++) {
+            for(int j = i + 1; j < bubbles.length; j++) {
+                if (bubbles[i] != null && bubbles[j] != null) {
+                    double ax = (double)bubbles[i].getX();
+                    double ay = (double)bubbles[i].getY();
+                    double bx = (double)bubbles[j].getX();
+                    double by = (double)bubbles[j].getY();
+                    double distx = (ax-bx)*(ax-bx);
+                    double disty = (ay-by)*(ay-by);
+                    double distance = Math.sqrt(distx + disty);
+                    if(Math.floor(distance) <= 100){
+                        bubbles[i].flipX();
+                        bubbles[j].flipY();
+                        bubbles[i].flipY();
+                        bubbles[j].flipX();
+
+                        //todo figure out which ways we need to flip and at which angle and speed
+                    }
+                }
+            }
+        }
+
         for(TouchIndicator indicator : touchIndicators) {
             if(indicator != null) {
                 indicator.update(deltaTime);
             }
         }
 
-        handleTouchEvents(controller);
+        handleTouchEvents(deltaTime, controller);
 
         frameRateTracker.update(deltaTime);
     }
 
-    protected abstract void handleTouchEvents(GameController controller);
+    protected abstract void handleTouchEvents(long deltaTime, GameController controller);
 
     public void present(SurfaceHolder surfaceHolder) {
         Canvas canvas = surfaceHolder.lockCanvas();

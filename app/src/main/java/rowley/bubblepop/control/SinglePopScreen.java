@@ -4,11 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.media.SoundPool;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -18,6 +16,7 @@ import rowley.bubblepop.interfaces.TouchEvent;
 import rowley.bubblepop.models.FrameRateTracker;
 import rowley.bubblepop.models.GrowingBubble;
 import rowley.bubblepop.models.MovingBubble;
+import rowley.bubblepop.util.BubbleInteractionHelper;
 import rowley.bubblepop.util.ColorHelper;
 
 /**
@@ -83,29 +82,14 @@ public class SinglePopScreen implements ScreenController {
 
     @Override
     public void update(long deltaTime, GameController gameController) {
-        int bubbleX = bubble.getX();
-        int bubbleY = bubble.getY();
-        int bubbleRadius = bubble.getRadius();
         touchEventList = gameController.getTouchHandler().getTouchEvents();
         if(touchEventList != null && !touchEventList.isEmpty() && bubble.getState() == GrowingBubble.State.GROWING) {
             for(TouchEvent event : touchEventList) {
-                if(event.getType() == TouchEvent.TOUCH_DOWN) {
-                    if(event.getX() > bubbleX - bubbleRadius
-                            && event.getX() < bubbleX + bubbleRadius
-                            && event.getY() > bubbleY - bubbleRadius
-                            && event.getY() < bubbleY + bubbleRadius) {
-                        //Passed the minimum criteria. But this looks at a box and we want
-                        //to evaluate whether the touch was within a circle.
-                        int xDiff = bubbleX - event.getX();
-                        int yDiffThreshold = (int)Math.sqrt(Math.pow(bubbleRadius, 2) - Math.pow(xDiff, 2));
-                        if(event.getY() > bubbleY - yDiffThreshold
-                                || event.getY() < bubbleY + yDiffThreshold) {
-                            bubble.pop();
-                            soundPool.stop(growSoundId);
-                            soundPool.play(popSoundId, 1.0f, 1.0f, 0, 0, 1f);
-                            createBubblePops(bubbleX, bubbleY, bubble.getColor());
-                        }
-                    }
+                if(event.getType() == TouchEvent.TOUCH_DOWN && BubbleInteractionHelper.wasBubbleTouched(bubble, event)) {
+                    bubble.pop();
+                    soundPool.stop(growSoundId);
+                    soundPool.play(popSoundId, 1.0f, 1.0f, 0, 0, 1f);
+                    createBubblePops(bubble.getX(), bubble.getY(), bubble.getColor());
                 }
             }
         }

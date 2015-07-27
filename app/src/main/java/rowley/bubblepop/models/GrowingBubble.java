@@ -3,26 +3,19 @@ package rowley.bubblepop.models;
 /**
  * Created by joe on 6/23/15.
  */
-public class GrowingBubble {
-    private final int INITIAL_RADIUS = 25;
+public class GrowingBubble extends BubbleBase {
+    private static final int INITIAL_RADIUS = 25;
     public static final int MAXIMUM_RADIUS = 250;
     private int growthRate = 150; //pixels per second
     private final int POP_TIME_IN_MILLIS = 500;
 
-    private int color;
-    private int x;
-    private int y;
-    private int radius;
     private State state;
     private boolean wasPopped = false;
     private long popDuration;
 
     public GrowingBubble(int x, int y, int color) {
-        this.x = x;
-        this.y = y;
-        this.radius = INITIAL_RADIUS;
+        super(x, y, INITIAL_RADIUS, color);
         this.state = State.GROWING;
-        this.color = color;
     }
 
 
@@ -40,22 +33,6 @@ public class GrowingBubble {
                 state = State.POPPED;
             }
         }
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getRadius() {
-        return radius;
     }
 
     public State getState() {
