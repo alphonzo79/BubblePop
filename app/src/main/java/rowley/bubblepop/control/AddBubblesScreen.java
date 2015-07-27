@@ -1,110 +1,30 @@
 package rowley.bubblepop.control;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.media.SoundPool;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Random;
 
 import rowley.bubblepop.interfaces.GameController;
 import rowley.bubblepop.interfaces.TouchEvent;
 import rowley.bubblepop.models.FrameRateTracker;
 import rowley.bubblepop.models.MovingBubble;
-import rowley.bubblepop.interfaces.ScreenController;
 import rowley.bubblepop.models.TouchIndicator;
 import rowley.bubblepop.util.ColorHelper;
 
 /**
  * Created by joe on 6/20/15.
  */
-public class AddBubblesScreen implements ScreenController {
-    private SoundPool soundPool;
-    private int bounceSoundId;
-
-    private MovingBubble[] bubbles;
-    private TouchIndicator[] touchIndicators;
-    private int bubbleCreateIndex = 0;
-    private int touchIndicatorIndex = 0;
-    private FrameRateTracker frameRateTracker;
-    private Paint paint;
-    private final int BACKGROUND_COLOR;
-
-    private int width, height;
-
-    private Random random;
-
-    private List<TouchEvent> touchEventList;
+public class AddBubblesScreen extends MovingBubbleScreenBase {
 
     public AddBubblesScreen(SurfaceHolder surfaceHolder, GameController gameController) {
-        paint = new Paint();
-        BACKGROUND_COLOR = ColorHelper.getBackgroundColor();
-
-        width = surfaceHolder.getSurfaceFrame().right;
-        height = surfaceHolder.getSurfaceFrame().bottom;
-
-        random = new Random();
-
-        bubbles = new MovingBubble[75];
-        bubbles[bubbleCreateIndex++] = createBubble();
-
-        touchIndicators = new TouchIndicator[25];
-
-        frameRateTracker = new FrameRateTracker();
-
-        soundPool = gameController.getSoundPool();
-        try {
-            bounceSoundId = soundPool.load(gameController.getContext().getAssets().openFd("bounce.mp3"), 0);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        super(surfaceHolder, gameController, 25);
     }
 
-    private MovingBubble createBubble() {
-        int bubbleX = random.nextInt(width);
-        int bubbleY = random.nextInt(height);
-
-        return createBubble(bubbleX, bubbleY);
-    }
-
-    private MovingBubble createBubble(int bubbleX, int bubbleY) {
-        float bubbleYDir = random.nextFloat() + 0.5f;
-        if(random.nextBoolean()) {
-            bubbleYDir = -bubbleYDir;
-        }
-        float bubbleXDir = random.nextFloat() + 0.5f;
-        if(random.nextBoolean()) {
-            bubbleXDir = -bubbleXDir;
-        }
-
-        float speedDiff = random.nextFloat() + 0.35f;
-
-        MovingBubble bubble = new MovingBubble(0, 0, width, height, bubbleX, bubbleY);
-        bubble.setInitialDirection(bubbleXDir, bubbleYDir);
-        bubble.setSpeedDifferential(speedDiff);
-        bubble.setColor(ColorHelper.getRandomColor());
-
-        return bubble;
-    }
-
-    public void update(long deltaTime, GameController controller) {
-        for(MovingBubble bubble : bubbles) {
-            if(bubble != null) {
-                bubble.updateBubble(deltaTime);
-            } else {
-                break;
-            }
-        }
-
-        for(TouchIndicator indicator : touchIndicators) {
-            if(indicator != null) {
-                indicator.update(deltaTime);
-            }
-        }
-
+    @Override
+    protected void handleTouchEvents(GameController controller) {
         touchEventList = controller.getTouchHandler().getTouchEvents();
         if(touchEventList != null && !touchEventList.isEmpty()) {
             for(TouchEvent event : touchEventList) {
@@ -120,48 +40,6 @@ public class AddBubblesScreen implements ScreenController {
                     }
                 }
             }
-        }
-
-        frameRateTracker.update(deltaTime);
-    }
-
-    public void present(SurfaceHolder surfaceHolder) {
-        Canvas canvas = surfaceHolder.lockCanvas();
-        if(canvas != null) {
-            paint.setColor(BACKGROUND_COLOR);
-            canvas.drawRect(0, 0, width, height, paint);
-
-            for(MovingBubble bubble : bubbles) {
-                if(bubble != null) {
-                    paint.setColor(bubble.getColor());
-                    canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRadius(), paint);
-                    if(bubble.isChangedDirection()) {
-                        soundPool.play(bounceSoundId, 1f, 1f, 0, 0, 1f);
-                    }
-                } else {
-                    break;
-                }
-            }
-
-            paint.setStyle(Paint.Style.STROKE);
-            for(TouchIndicator indicator : touchIndicators) {
-                if(indicator != null) {
-                    TouchIndicator.IndicatorCircle[] circles = indicator.getIndicatorCircles();
-                    for (TouchIndicator.IndicatorCircle circle : circles) {
-                        if (circle != null) {
-                            paint.setColor(circle.getColor());
-                            canvas.drawCircle(indicator.getX(), indicator.getY(), circle.getRadius(), paint);
-                        }
-                    }
-                }
-            }
-
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(ColorHelper.getTextColor());
-            paint.setTextSize(24);
-            canvas.drawText(frameRateTracker.getFrameRate() + " fps", 50, 50, paint);
-
-            surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
 }
