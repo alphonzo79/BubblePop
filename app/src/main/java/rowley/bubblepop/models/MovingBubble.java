@@ -124,4 +124,20 @@ public class MovingBubble extends BubbleBase {
     public boolean isChangedDirection() {
         return changedDirection;
     }
+
+    public float getyDirection() {
+        return yDirection;
+    }
+
+    public void setyDirection(float yDirection) {
+        this.yDirection = yDirection;
+    }
+
+    public float getxDirection() {
+        return xDirection;
+    }
+
+    public void setxDirection(float xDirection) {
+        this.xDirection = xDirection;
+    }
 }

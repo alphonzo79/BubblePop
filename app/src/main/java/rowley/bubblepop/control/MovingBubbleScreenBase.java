@@ -26,9 +26,7 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
     protected int bounceSoundId;
 
     protected MovingBubble[] bubbles;
-    protected TouchIndicator[] touchIndicators;
     protected int bubbleCreateIndex = 0;
-    protected int touchIndicatorIndex = 0;
     protected FrameRateTracker frameRateTracker;
     protected Paint paint;
     protected final int BACKGROUND_COLOR;
@@ -49,8 +47,6 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
         random = new Random();
 
         bubbles = new MovingBubble[bubbleArrayLength];
-
-        touchIndicators = new TouchIndicator[25];
 
         frameRateTracker = new FrameRateTracker();
 
@@ -109,25 +105,19 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
                     double distx = (ax-bx)*(ax-bx);
                     double disty = (ay-by)*(ay-by);
                     double distance = Math.sqrt(distx + disty);
-                    if(Math.floor(distance) <= 100){
+                    if(Math.floor(distance) <= bubbles[i].getBubbleRadius() * 2){
                         BubbleInteractionHelper.collideBubbles(bubbles[i], bubbles[j]);
                     }
                 }
             }
         }
 
-        for(TouchIndicator indicator : touchIndicators) {
-            if(indicator != null) {
-                indicator.update(deltaTime);
-            }
-        }
-
-        handleTouchEvents(deltaTime, controller);
+        continueUpdate(deltaTime, controller);
 
         frameRateTracker.update(deltaTime);
     }
 
-    protected abstract void handleTouchEvents(long deltaTime, GameController controller);
+    protected abstract void continueUpdate(long deltaTime, GameController controller);
 
     public void present(SurfaceHolder surfaceHolder) {
         Canvas canvas = surfaceHolder.lockCanvas();
@@ -143,22 +133,11 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
                         soundPool.play(bounceSoundId, 1f, 1f, 0, 0, 1f);
                     }
                 } else {
-                    break;
+                    continue;
                 }
             }
 
-            paint.setStyle(Paint.Style.STROKE);
-            for(TouchIndicator indicator : touchIndicators) {
-                if(indicator != null) {
-                    TouchIndicator.IndicatorCircle[] circles = indicator.getIndicatorCircles();
-                    for (TouchIndicator.IndicatorCircle circle : circles) {
-                        if (circle != null) {
-                            paint.setColor(circle.getColor());
-                            canvas.drawCircle(indicator.getX(), indicator.getY(), circle.getRadius(), paint);
-                        }
-                    }
-                }
-            }
+            continuePresent(canvas);
 
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(ColorHelper.getTextColor());
@@ -168,4 +147,6 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
     }
+
+    protected abstract void continuePresent(Canvas canvas);
 }
