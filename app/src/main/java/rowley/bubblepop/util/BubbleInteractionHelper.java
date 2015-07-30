@@ -44,21 +44,21 @@ public class BubbleInteractionHelper {
 
         double bubbleOneTotalToMaintain = (bubbleOne.getxDirection() * bubbleOne.getxDirection()) + (bubbleOne.getyDirection() * bubbleOne.getyDirection());
         bubbleOneNewX = (float)Math.sqrt(bubbleOneTotalToMaintain * xRatio);
-        if(xDiff * bubbleOneNewX < 0) {
+        if(xRatio >= .5F && xDiff * bubbleOneNewX < 0) {
             bubbleOneNewX = bubbleOneNewX * -1;
         }
         bubbleOneNewY = (float)Math.sqrt(bubbleOneTotalToMaintain * yRatio);
-        if(yDiff * bubbleOneNewY < 0) {
+        if(yRatio >= .5F && yDiff * bubbleOneNewY < 0) {
             bubbleOneNewY = bubbleOneNewY * -1;
         }
 
         double bubbleTwoTotalToMaintain = (bubbleTwo.getxDirection() * bubbleTwo.getxDirection()) + (bubbleTwo.getyDirection() * bubbleTwo.getyDirection());
         bubbleTwoNewX = (float)Math.sqrt(bubbleTwoTotalToMaintain * xRatio);
-        if(xDiff * bubbleTwoNewX > 0) {
+        if(xRatio >= .5F && xDiff * bubbleTwoNewX > 0) {
             bubbleTwoNewX = bubbleTwoNewX * -1;
         }
         bubbleTwoNewY = (float)Math.sqrt(bubbleTwoTotalToMaintain * yRatio);
-        if(yDiff * bubbleTwoNewY > 0) {
+        if(yRatio >= .5F && yDiff * bubbleTwoNewY > 0) {
             bubbleTwoNewY = bubbleTwoNewY * -1;
         }
 
