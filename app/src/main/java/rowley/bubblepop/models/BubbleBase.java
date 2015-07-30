@@ -31,4 +31,8 @@ public abstract class BubbleBase {
     public int getRadius() {
         return radius;
     }
+
+    public void setRadiusDifferential(float differential) {
+        radius = (int)(radius * differential);
+    }
 }

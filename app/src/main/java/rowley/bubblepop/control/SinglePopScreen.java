@@ -113,7 +113,7 @@ public class SinglePopScreen implements ScreenController {
                 bubbleGrowSoundSpeed = bubble.getSoundPlaybackRate(GROW_SOUND_LENGTH);
                 soundPool.play(growSoundId, 1.0f, 1.0f, 0, 0, bubbleGrowSoundSpeed);
             } else {
-                gameController.setScreenController(new AddBubblesScreen(gameController.getSurfaceHolder(), gameController));
+                gameController.setScreenController(new KillBubblesScreen(gameController.getSurfaceHolder(), gameController));
                 //todo
             }
         }
@@ -171,7 +171,7 @@ public class SinglePopScreen implements ScreenController {
                 paint.setColor(bubble.getColor());
                 for(MovingBubble bubblePop : bubblePops) {
                     if(bubblePop != null) {
-                        canvas.drawCircle(bubblePop.getX(), bubblePop.getY(), bubblePop.getBubbleRadius(), paint);
+                        canvas.drawCircle(bubblePop.getX(), bubblePop.getY(), bubblePop.getRadius(), paint);
                     }
                 }
                 //todo

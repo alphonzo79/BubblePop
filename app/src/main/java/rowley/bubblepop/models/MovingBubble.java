@@ -9,14 +9,11 @@ public class MovingBubble extends BubbleBase {
     private int leftBound, topBound, rightBound, bottomBound;
     private float yDirection, xDirection;
     private static final int BUBBLE_RADIUS_DIVISOR = 28;
-    private final int BUBBLE_RADIUS;
     private boolean ignoreBounds = false;
     private boolean changedDirection = false;
 
     public MovingBubble(int leftBound, int topBound, int rightBound, int bottomBound, int initialX, int initialY) {
         super(initialX, initialY, (rightBound - leftBound) / BUBBLE_RADIUS_DIVISOR, Color.argb(255, 255, 0, 0));
-
-        BUBBLE_RADIUS = this.radius;
 
         this.leftBound = leftBound;
         this.topBound = topBound;
@@ -52,11 +49,11 @@ public class MovingBubble extends BubbleBase {
 
         if(!ignoreBounds) {
             if (xDirection > 0) {
-                if (x >= (rightBound - BUBBLE_RADIUS)) {
+                if (x >= (rightBound - radius)) {
                     flipX();
                 }
             } else {
-                if (x <= (leftBound + BUBBLE_RADIUS)) {
+                if (x <= (leftBound + radius)) {
                     flipX();
                 }
             }
@@ -64,11 +61,11 @@ public class MovingBubble extends BubbleBase {
 
         if(!ignoreBounds) {
             if (yDirection > 0) {
-                if (y >= (bottomBound - BUBBLE_RADIUS)) {
+                if (y >= (bottomBound - radius)) {
                     flipY();
                 }
             } else {
-                if (y <= topBound + BUBBLE_RADIUS) {
+                if (y <= topBound + radius) {
                     flipY();
                 }
             }
@@ -99,10 +96,6 @@ public class MovingBubble extends BubbleBase {
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public int getBubbleRadius() {
-        return BUBBLE_RADIUS;
     }
 
     public int getColor() {

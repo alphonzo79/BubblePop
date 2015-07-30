@@ -89,8 +89,6 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
         for(MovingBubble bubble : bubbles) {
             if(bubble != null) {
                 bubble.updateBubble(deltaTime);
-            } else {
-                break;
             }
         }
 
@@ -105,7 +103,7 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
                     double distx = (ax-bx)*(ax-bx);
                     double disty = (ay-by)*(ay-by);
                     double distance = Math.sqrt(distx + disty);
-                    if(Math.floor(distance) <= bubbles[i].getBubbleRadius() * 2){
+                    if(Math.floor(distance) <= bubbles[i].getRadius() * 2){
                         BubbleInteractionHelper.collideBubbles(bubbles[i], bubbles[j]);
                     }
                 }
@@ -128,12 +126,10 @@ public abstract class MovingBubbleScreenBase implements ScreenController {
             for(MovingBubble bubble : bubbles) {
                 if(bubble != null) {
                     paint.setColor(bubble.getColor());
-                    canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getBubbleRadius(), paint);
+                    canvas.drawCircle(bubble.getX(), bubble.getY(), bubble.getRadius(), paint);
                     if(bubble.isChangedDirection()) {
                         soundPool.play(bounceSoundId, 1f, 1f, 0, 0, 1f);
                     }
-                } else {
-                    continue;
                 }
             }
 
