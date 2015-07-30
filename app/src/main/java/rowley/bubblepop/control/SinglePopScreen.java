@@ -24,6 +24,7 @@ import rowley.bubblepop.util.ColorHelper;
  */
 public class SinglePopScreen implements ScreenController {
     private GrowingBubble bubble;
+    private float bubbleGrowthRateDifferential = 1.0F;
     private float bubbleGrowSoundSpeed;
     private final int GROW_SOUND_LENGTH = 1;
     private MovingBubble[] bubblePops;
@@ -78,7 +79,10 @@ public class SinglePopScreen implements ScreenController {
         int maxRadius = GrowingBubble.getMaximumRadius(0, width);
         int x = random.nextInt(width - (maxRadius * 2)) + maxRadius;
         int y = random.nextInt(height - (maxRadius * 2)) + maxRadius;
-        return new GrowingBubble(0, width, x, y, ColorHelper.getRandomColor());
+        GrowingBubble result =  new GrowingBubble(0, width, x, y, ColorHelper.getRandomColor());
+        result.adjustGrowthRate(bubbleGrowthRateDifferential);
+
+        return result;
     }
 
     @Override
@@ -109,6 +113,7 @@ public class SinglePopScreen implements ScreenController {
             }
             if(bubble.wasPopped()) {
                 score += 10;
+                bubbleGrowthRateDifferential = bubbleGrowthRateDifferential * 1.05F;
                 bubble = getBubble();
                 bubbleGrowSoundSpeed = bubble.getSoundPlaybackRate(GROW_SOUND_LENGTH);
                 soundPool.play(growSoundId, 1.0f, 1.0f, 0, 0, bubbleGrowSoundSpeed);
@@ -174,7 +179,6 @@ public class SinglePopScreen implements ScreenController {
                         canvas.drawCircle(bubblePop.getX(), bubblePop.getY(), bubblePop.getRadius(), paint);
                     }
                 }
-                //todo
             }
 
             paint.setTypeface(Typeface.DEFAULT_BOLD);
